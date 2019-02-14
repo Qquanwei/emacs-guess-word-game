@@ -105,7 +105,7 @@
       (add-text-properties (- begin 2) (point) '(read-only t)))))
 
 ;;; autoload
-(defun guess ()
+(defun guess-word ()
   (interactive)
   (let ((buffer-name (format "*guess-word %s*" VERSION)))
     (when (not (get-buffer buffer-name))
@@ -118,7 +118,8 @@
 
 
 (defun guess-word-esl-line-p (line)
-  (not (s-matches? "^[a-zA-Z]+\\." line)))
+  (not (or (s-matches? "^ +$" line)
+           (s-matches? "^[a-zA-Z]+\\." line))))
 
 (defun guess-word-esl-line-to-pair (line)
   (let* (

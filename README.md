@@ -1,3 +1,7 @@
+# 规则
+
+给出单词释义，另外将答案糢糊化，写出正确的单词即可。
+
 # using
 
 > M-: (guess-word)
@@ -10,5 +14,8 @@
 
 
 ## 词库
+
+* 四级词汇
+* 雅思核心
 
 Thanks https://github.com/007rf/dingfan
