@@ -95,6 +95,7 @@
 
 ;;; autoload
 (defun guess-word ()
+  (interactive)
   (with-current-buffer
       (get-buffer-create (format "*guess-word %s *" VERSION))
     (add-text-properties 1 (point-max) '(read-only nil))
