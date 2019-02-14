@@ -1,8 +1,11 @@
-;;; guess word game for emacs !!
+;;; guess-word.el  guess word game for emacs !
 
+;;; Code:
 (require 's)
 
 (defconst VERSION "0.0.1")
+
+(defconst DIRNAME (file-name-directory load-file-name))
 
 (defgroup guess-word nil
   "Guess word for ESL "
@@ -104,7 +107,7 @@
       (insert definement)
       (add-text-properties (- begin 2) (point) '(read-only t)))))
 
-;;; autoload
+;;;###autoload
 (defun guess-word ()
   (interactive)
   (let ((buffer-name (format "*guess-word %s*" VERSION)))
@@ -131,7 +134,7 @@
   (with-temp-buffer
     (setq-local
      guess-word-current-dictionary
-     (car guess-word-dictionarys))
+     (expand-file-name (car guess-word-dictionarys) DIRNAME))
     (insert-file-contents guess-word-current-dictionary)
     (let ((line (random (line-number-at-pos (point-max)))))
       (forward-line line)
@@ -156,3 +159,5 @@
   (use-local-map guess-word-mode-map))
 
 (provide 'guess-word-mode)
+
+;;; guess-word.el ends here
