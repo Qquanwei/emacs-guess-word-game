@@ -50,10 +50,12 @@
   (message "wrong"))
 
 (defun guess-word-next ()
-  (let ((inhibit-read-only t))
-    (erase-buffer))
-  (let ((pair (guess-word-esl-line-to-pair (guess-word-extract-word))))
-    (guess-word-insert-word (car pair) (cdr pair))))
+  (save-excursion
+    (let ((inhibit-read-only t))
+      (goto-char (point-min))
+      (erase-buffer)
+      (let ((pair (guess-word-esl-line-to-pair (guess-word-extract-word))))
+        (guess-word-insert-word (car pair) (cdr pair))))))
 
 (defun guess-word-next-maybe-wrong ()
   (interactive)
@@ -96,12 +98,14 @@
 ;;; autoload
 (defun guess-word ()
   (interactive)
-  (with-current-buffer
-      (get-buffer-create (format "*guess-word %s *" VERSION))
-    (add-text-properties 1 (point-max) '(read-only nil))
-    (switch-to-buffer-other-window (current-buffer))
-    (guess-word-mode)
-    (guess-word-next)))
+  (let ((buffer-name (format "*guess-word %s *" VERSION)))
+    (when (not (get-buffer buffer-name))
+      (with-current-buffer
+          (get-buffer-create buffer-name)
+        (add-text-properties 1 (point-max) '(read-only nil))
+        (guess-word-mode)
+        (guess-word-next)))
+    (switch-to-buffer-other-window (get-buffer buffer-name))))
 
 
 (defun guess-word-esl-line-to-pair (line)
@@ -112,7 +116,9 @@
 
 (defun guess-word-extract-word ()
   (with-temp-buffer
-    (setq-local guess-word-current-dictionary (car guess-word-dictionarys))
+    (setq-local
+     guess-word-current-dictionary
+     (car guess-word-dictionarys))
     (insert-file-contents guess-word-current-dictionary)
     (let ((line (random (line-number-at-pos (point-max)))))
       (forward-line line)
