@@ -6,7 +6,8 @@
 
 (defgroup guess-word nil
   "Guess word for ESL "
-  :version "0.0.1"
+  :group 'language
+  :version VERSION
   :prefix "guess-word-"
   :link '(url-link "https://github.com/Qquanwei/emacs-guess-word-game"))
 
@@ -25,13 +26,13 @@
 
 (defvar-local guess-word-mask-condition 'oddp)
 
-(defface guess-word-headline
-  '((t (:inherit bold)))
-   :group 'guess-word)
+;; (defface guess-word-headline
+;;   '((t (:inherit bold)))
+;;   :group 'guess-word)
 
-(defface guess-word-definement
-  '((t (:inherit italic)))
-   :group 'guess-word)
+;; (defface guess-word-definement
+;;   '((t (:inherit italic)))
+;;   :group 'guess-word)
 
 (defun random-word-map-string (fn str)
   (let ((index 0))
@@ -63,7 +64,7 @@
   (setq
    guess-word-dictionarys
    (append (cdr guess-word-dictionarys) (list (car guess-word-dictionarys))))
-  (message (format "switch to %s ." (car guess-word-dictionarys))))
+  (message (format "switch to %s!" (car guess-word-dictionarys))))
 
 (defun guess-word-next-maybe-wrong ()
   (interactive)
@@ -82,17 +83,17 @@
     (goto-char 0)
     (let ((word (thing-at-point 'word)))
       (if (string= (car guess-word-current-context) word)
-        (guess-word-success word)
+          (guess-word-success word)
         (guess-word-failed word)))))
 
 ;;; random word by insert mask, pure function not random
 (defun random-word (word)
   (s-join "" (random-word-map-string
-   (lambda (char index)
-     (cond
-      ((funcall guess-word-mask-condition index) (string char))
-      (t guess-word-mask)))
-   word)))
+              (lambda (char index)
+                (cond
+                 ((funcall guess-word-mask-condition index) (string char))
+                 (t guess-word-mask)))
+              word)))
 
 (defun guess-word-insert-word (word definement)
   (setq guess-word-current-result nil)
@@ -104,7 +105,7 @@
       (add-text-properties (- begin 2) (point) '(read-only t)))))
 
 ;;; autoload
-(defun guess-word ()
+(defun guess ()
   (interactive)
   (let ((buffer-name (format "*guess-word %s*" VERSION)))
     (when (not (get-buffer buffer-name))
@@ -147,7 +148,7 @@
 
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
-  :group "guess-word"
+  :group 'guess-word
   (setq-local guess-word-current-result nil)
   (setq-local guess-word-current-context nil)
   (overwrite-mode)
