@@ -2,10 +2,11 @@
 
 ;;; Code:
 (require 's)
+(require 'f)
 
 (defconst VERSION "0.0.1")
 
-(defconst DIRNAME (file-name-directory load-file-name))
+(defconst DIRNAME (file-name-directory (f-this-file)))
 
 (defgroup guess-word nil
   "Guess word for ESL "
@@ -29,13 +30,15 @@
 
 (defvar-local guess-word-mask-condition 'oddp)
 
-;; (defface guess-word-headline
-;;   '((t (:inherit bold)))
-;;   :group 'guess-word)
+(defface guess-word-headline
+  '((t (:inherit bold)))
+  "Guess word headline face"
+  :group 'guess-word)
 
-;; (defface guess-word-definement
-;;   '((t (:inherit italic)))
-;;   :group 'guess-word)
+(defface guess-word-definement
+  '((t (:inherit italic)))
+  "Guess word definement face"
+  :group 'guess-word)
 
 (defun random-word-map-string (fn str)
   (let ((index 0))
@@ -150,11 +153,16 @@
   (define-key guess-word-mode-map (kbd "C-<return>") 'guess-word-next-maybe-wrong)
   (define-key guess-word-mode-map (kbd "<return>") 'guess-word-submit))
 
+(setq guess-word-mode-font-lock
+      '(("^[a-zA-Z]+$" . guess-word-headline)
+        ("^ ." . guess-word-definement)))
+
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
   (setq-local guess-word-current-result nil)
   (setq-local guess-word-current-context nil)
+  (setq font-lock-defaults '(guess-word-mode-font-lock))
   (overwrite-mode)
   (use-local-map guess-word-mode-map))
 
