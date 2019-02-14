@@ -18,7 +18,7 @@
 
 
 (defcustom guess-word-dictionarys
-  '("四级词汇.txt")
+  '("四级词汇.txt" "雅思核心.txt")
   "guess word dictionary paths"
   :group 'guess-word
   :type 'list)
@@ -56,6 +56,14 @@
       (erase-buffer)
       (let ((pair (guess-word-esl-line-to-pair (guess-word-extract-word))))
         (guess-word-insert-word (car pair) (cdr pair))))))
+
+(defun guess-word-switch-dictionary ()
+  "切换词库"
+  (interactive)
+  (setq
+   guess-word-dictionarys
+   (append (cdr guess-word-dictionarys) (list (car guess-word-dictionarys))))
+  (message (format "switch to %s ." (car guess-word-dictionarys))))
 
 (defun guess-word-next-maybe-wrong ()
   (interactive)
@@ -98,7 +106,7 @@
 ;;; autoload
 (defun guess-word ()
   (interactive)
-  (let ((buffer-name (format "*guess-word %s *" VERSION)))
+  (let ((buffer-name (format "*guess-word %s*" VERSION)))
     (when (not (get-buffer buffer-name))
       (with-current-buffer
           (get-buffer-create buffer-name)
@@ -133,6 +141,7 @@
   "Keymap for guess-word-mode")
 
 (progn
+  (define-key guess-word-mode-map (kbd "C-r") 'guess-word-switch-dictionary)
   (define-key guess-word-mode-map (kbd "C-<return>") 'guess-word-next-maybe-wrong)
   (define-key guess-word-mode-map (kbd "<return>") 'guess-word-submit))
 
