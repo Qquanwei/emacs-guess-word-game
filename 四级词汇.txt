@@ -2,72 +2,52 @@ abandoned    adj.被抛弃了的，被遗弃了的，被放弃了的；放荡的
 abundance    n.丰富
 accidental    adj.偶然的；非本质的
 accommodate    v.向…提供住处(或膳宿)；给…提供方便；容纳；使适应，顺应
-accord    v.相一致；相符合；授予，赠与
-n.一致，符合；(尤指国与国之间的)谅解
+accord    v.相一致；相符合；授予，赠与 n.一致，符合；(尤指国与国之间的)谅解
 accordance    n: 符合, 授予;
 accuracy    n.准确(性)；准确度
-ache    n.疼痛
-v.觉得疼痛；渴望
+ache    n.疼痛 v.觉得疼痛；渴望
 additional    adj. 增加的, 附加的, 追加的;  
 advanced    adj.先进的，高级的
 adverb    n.副词（缩写形式为adv.）
-aerial    adj.飞机的，航空的，由飞机进行的；空中的，架空的
-n. 天线
+aerial    adj.飞机的，航空的，由飞机进行的；空中的，架空的 n. 天线
 agenda    n.议事日程
-aid    n. 帮助, 救护;  帮手;  
-vi. 帮助;  
-vt. 援助;  
+aid    n. 帮助, 救护;  帮手; vi. 帮助; vt. 援助;
 alliance    n. 联姻;  联盟, 同盟;  盟约;  盟国, 同盟者;  类同;
 allocate    v.分配，配给
-alloy    n.合金 
-v.使成合金
+alloy    n.合金 v.使成合金
 ally    n. 同盟国, 盟友;  帮手, 拥护者;  vi. 结盟;  vt. 使联姻;  使发生关联;
 ambitious    adj.有抱负的，雄心勃勃的，有野心的
 anyhow    adv.不论用何种方法，无论如何；随意地；尽管如此
 apparent    adj.表面上的，貌似(真实)的；显然的，明白的，清晰可见的
-applaud    vi. 鼓掌;  喝彩;  
-vt. 向…鼓掌表示赞赏, 给…捧场;  
+applaud    vi. 鼓掌;  喝彩; vt. 向…鼓掌表示赞赏, 给…捧场;  
 applicant    n.申请人，请求者
 appoint    v.委派，任命；约定，确定，指定
-approximate    adj.近似的，约略的 
-v.接近，近似
+approximate    adj.近似的，约略的 v.接近，近似
 article    n.物品；文章；条款；冠词
 artistic    adj.艺术的；艺术家的
 assembly    n.集合；集会；装配
 atom    n.原子；微粒；原子能
 aviation    n.航空，航空学；飞机制造业
 awkward    adj. 笨拙的;  不雅观的;  难操纵的;  不便的;  尴尬的;  棘手的;
-baffle    v.阻碍，使困惑
-n.挡板
-bankrupt    adj.破产的，彻底失败的；彻底缺乏的
-n.破产者
-v. 使破产，使枯竭
+baffle    v.阻碍，使困惑 n.挡板
+bankrupt    adj.破产的，彻底失败的；彻底缺乏的 n.破产者 v. 使破产，使枯竭
 barn    n.谷仓，牲口棚
-basin    n. 盆;  脸盆;  盆地;  
-vi. 凹下成盆状;  
-vt. 使(地壳)凹下成盆状;  
+basin    n. 盆;  脸盆;  盆地; vi. 凹下成盆状;  vt. 使(地壳)凹下成盆状;
 beard    n.(下巴上的)胡须
 beggar    n.乞丐；家伙
-beloved    adj.所钟爱的，受爱戴的；心爱的
-n. 爱人
+beloved    adj.所钟爱的，受爱戴的；心爱的 n. 爱人
 beneath    prep. 在…下方;  低于;  adv. 在下方;
-bid    v.出价，投标；问候，道别，吩咐 
-n.投标；努力争取
+bid    v.出价，投标；问候，道别，吩咐 n.投标；努力争取
 blade    n: 【植物学】草叶, 螺旋桨叶, 叶片状物, 刀片;
 blast    n.一阵（疾风等）；爆炸；冲击波v.(用炸药)炸，摧毁
 bounce    v.反跳，弹起；跳起
-bound    adj.受约束；有义务；一定的
-v.束缚；使跳跃
-n. 范围；跳跃
-brass    v.付(款)
-adj.黄铜的
+bound    adj.受约束；有义务；一定的 v.束缚；使跳跃 n. 范围；跳跃
+brass    v.付(款) adj.黄铜的
 n.黄铜(器)；<口>厚脸皮；高级将领官员
 breadth    n.宽度，幅度；幅面
 brow    n.额；眉，眉毛
-bulk    adj.大量的
-n.容量，体积；大块
-butcher    n.屠夫，残杀者 
-v.屠宰，屠杀
+bulk    adj.大量的 n.容量，体积；大块
+butcher    n.屠夫，残杀者 v.屠宰，屠杀
 casualty    n.伤亡人员；死伤者，受害人
 cheat    v.骗，哄；作弊
 n.欺骗；骗子，骗术

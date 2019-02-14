@@ -108,6 +108,9 @@
     (switch-to-buffer-other-window (get-buffer buffer-name))))
 
 
+(defun guess-word-esl-line-p (line)
+  (not (s-matches? "^[a-zA-Z]+\\." line)))
+
 (defun guess-word-esl-line-to-pair (line)
   (let* (
          (index (s-index-of " " line))
@@ -122,7 +125,9 @@
     (insert-file-contents guess-word-current-dictionary)
     (let ((line (random (line-number-at-pos (point-max)))))
       (forward-line line)
-      (thing-at-point 'line t))))
+      (if (guess-word-esl-line-p (thing-at-point 'line t))
+          (thing-at-point 'line t)
+        (guess-word-extract-word)))))
 
 (defvar guess-word-mode-map (make-sparse-keymap)
   "Keymap for guess-word-mode")
