@@ -2,6 +2,8 @@
 
 给出单词释义，另外将答案糢糊化，写出正确的单词即可。
 
+![image](./snapshot/guess-word.gif)
+
 # using
 
 > M-: (guess-word)
