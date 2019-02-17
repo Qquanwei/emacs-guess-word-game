@@ -1,4 +1,8 @@
-;;; guess-word.el  guess word game for emacs !
+;;; guess-word.el --- guess word game for emacs !
+
+
+;;; Commentary:
+;;
 
 ;;; Code:
 (require 's)
@@ -17,14 +21,14 @@
 
 (defcustom guess-word-mask
   "-"
-  "guess word mask "
+  "Guess word mask."
   :group 'guess-word
   :type 'string)
 
 
 (defcustom guess-word-dictionarys
   '("四级词汇.txt" "雅思核心.txt")
-  "guess word dictionary paths"
+  "Guess word dictionary paths."
   :group 'guess-word
   :type 'list)
 
@@ -41,6 +45,7 @@
   :group 'guess-word)
 
 (defun random-word-map-string (fn str)
+  "Map str with index to Fn."
   (let ((index 0))
     (mapcar
      (lambda (ele)
@@ -160,6 +165,10 @@
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
+  (setq-local
+   header-line-format
+   (substitute-command-keys
+    "  检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"))
   (setq-local guess-word-current-result nil)
   (setq-local guess-word-current-context nil)
   (setq font-lock-defaults '(guess-word-mode-font-lock))
