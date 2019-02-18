@@ -18,6 +18,7 @@
 ## 词库
 
 * 四级词汇
-* 雅思核心
+* 六级词汇
+* 托福核心
 
-Thanks https://github.com/007rf/dingfan
+Thanks https://github.com/mahavivo/english-wordlists
