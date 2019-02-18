@@ -27,7 +27,7 @@
 
 
 (defcustom guess-word-dictionarys
-  '("四级词汇.txt" "雅思核心.txt")
+  '("CET4_edited.txt" "CET6_edited.txt" "TOEFL.txt")
   "Guess word dictionary paths."
   :group 'guess-word
   :type 'list)
