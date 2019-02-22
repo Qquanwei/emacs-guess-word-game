@@ -140,9 +140,13 @@
 
 (defun guess-word-extract-word ()
   (with-temp-buffer
+
     (setq-local
      guess-word-current-dictionary
-     (expand-file-name (car guess-word-dictionarys) DIRNAME))
+     (if (f-absolute-p (car guess-word-dictionarys))
+         (car guess-word-dictionarys)
+       (expand-file-name (car guess-word-dictionarys) DIRNAME) ))
+
     (insert-file-contents guess-word-current-dictionary)
     (let ((line (random (line-number-at-pos (point-max)))))
       (forward-line line)
@@ -174,6 +178,19 @@
   (setq font-lock-defaults '(guess-word-mode-font-lock))
   (overwrite-mode)
   (use-local-map guess-word-mode-map))
+
+(defun guess-word-add-dictionary-path (pName)
+  "Added local dictionary to guess-word search list"
+  (interactive "fAdded Path: ")
+  (unless (member pName guess-word-dictionarys)
+    (add-to-list 'guess-word-dictionarys pName ))
+  (message (format "%s Added!" pName)))
+
+(defun guess-word-delete-dictionary-path ()
+  "Delete dictionary from guess-word search list"
+  (interactive)
+  (let ((item (completing-read "" guess-word-dictionarys)))
+    (setq guess-word-dictionarys (remove item guess-word-dictionarys ) )))
 
 (provide 'guess-word-mode)
 

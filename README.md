@@ -13,6 +13,9 @@
 * `<return>` 检查输入是否正确
 * `C-r` 切换词库
 * `C-<return>` 如果输入正确选择下一个单词，如果当前输入错误将会展示正确答案
+* `M-x guess-word-add-dictionary-path` 添加自定义字典
+* `M-x guess-word-delete-dictionary-path` 删除某一个词典
+
 
 
 ## 词库
