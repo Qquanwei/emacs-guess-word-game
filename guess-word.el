@@ -75,6 +75,7 @@
   (setq
    guess-word-dictionarys
    (append (cdr guess-word-dictionarys) (list (car guess-word-dictionarys))))
+  (guess-word-refresh-header-line)
   (message (format "switch to %s!" (car guess-word-dictionarys))))
 
 (defun guess-word-next-maybe-wrong ()
@@ -166,13 +167,18 @@
       '(("^[a-zA-Z]+$" . guess-word-headline)
         ("^ ." . guess-word-definement)))
 
-(define-derived-mode guess-word-mode nil "GSW"
-  "The guss word game major mode"
-  :group 'guess-word
+(defun guess-word-refresh-header-line ()
   (setq-local
    header-line-format
    (substitute-command-keys
-    "  检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"))
+    (format
+     "[%s] 检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"
+     (car guess-word-dictionarys)))))
+
+(define-derived-mode guess-word-mode nil "GSW"
+  "The guss word game major mode"
+  :group 'guess-word
+  (guess-word-refresh-header-line)
   (setq-local guess-word-current-result nil)
   (setq-local guess-word-current-context nil)
   (setq font-lock-defaults '(guess-word-mode-font-lock))
