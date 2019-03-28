@@ -25,7 +25,6 @@
   :group 'guess-word
   :type 'string)
 
-
 (defcustom guess-word-dictionarys
   '("CET4_edited.txt" "CET6_edited.txt" "TOEFL.txt")
   "Guess word dictionary paths."
@@ -33,6 +32,8 @@
   :type 'list)
 
 (defvar-local guess-word-mask-condition 'oddp)
+(defvar-local guess-word-total 0)
+(defvar-local guess-word-score 0)
 
 (defface guess-word-headline
   '((t (:inherit bold)))
@@ -55,6 +56,7 @@
 
 (defun guess-word-success (word)
   (setq guess-word-current-result t)
+  (setq-local guess-word-score (1+ guess-word-score))
   (message "success"))
 
 (defun guess-word-failed (word)
@@ -63,6 +65,8 @@
 
 (defun guess-word-next ()
   (save-excursion
+    (setq  guess-word-total (1+ guess-word-total))
+    (guess-word-refresh-header-line)
     (let ((inhibit-read-only t))
       (goto-char (point-min))
       (erase-buffer)
@@ -110,6 +114,7 @@
 (defun guess-word-insert-word (word definement)
   (setq guess-word-current-result nil)
   (setq guess-word-current-context (list `(,@word)))
+
   (save-excursion
     (insert (format "%s\n\n" (random-word word)))
     (let ((begin (point)))
@@ -128,7 +133,6 @@
         (guess-word-next)))
     (switch-to-buffer-other-window (get-buffer buffer-name))))
 
-
 (defun guess-word-esl-line-p (line)
   (not (or (s-matches? "^ +$" line)
            (s-matches? "^[a-zA-Z]+\\." line))))
@@ -141,7 +145,6 @@
 
 (defun guess-word-extract-word ()
   (with-temp-buffer
-
     (setq-local
      guess-word-current-dictionary
      (if (f-absolute-p (car guess-word-dictionarys))
@@ -172,16 +175,18 @@
    header-line-format
    (substitute-command-keys
     (format
-     "[%s] 检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"
-     (car guess-word-dictionarys)))))
+     "[%s][%s/%s] 检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"
+     (car guess-word-dictionarys) guess-word-score guess-word-total))))
 
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
-  (guess-word-refresh-header-line)
   (setq-local guess-word-current-result nil)
   (setq-local guess-word-current-context nil)
+  (setq-local guess-word-total 0)
+  (setq-local guess-word-score 0)
   (setq font-lock-defaults '(guess-word-mode-font-lock))
+  (guess-word-refresh-header-line)
   (overwrite-mode)
   (use-local-map guess-word-mode-map))
 
