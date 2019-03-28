@@ -56,7 +56,6 @@
 
 (defun guess-word-success (word)
   (setq guess-word-current-result t)
-  (setq-local guess-word-score (1+ guess-word-score))
   (message "success"))
 
 (defun guess-word-failed (word)
@@ -65,6 +64,8 @@
 
 (defun guess-word-next ()
   (save-excursion
+    (when guess-word-current-result
+      (setq  guess-word-score (1+ guess-word-score)))
     (setq  guess-word-total (1+ guess-word-total))
     (guess-word-refresh-header-line)
     (let ((inhibit-read-only t))
@@ -84,6 +85,7 @@
 
 (defun guess-word-next-maybe-wrong ()
   (interactive)
+  (guess-word-submit)
   (if guess-word-current-result
       (guess-word-next)
     (save-excursion
