@@ -1,15 +1,31 @@
 ;;; guess-word.el --- guess word game for emacs !
 
+;; Author: quanwei9958@126.com
+;; Version: 1.0.0
+;; Package-Requires: ((s "1.12.0") (f "0.20.0"))
 
-;;; Commentary:
-;;
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;; Usage
+;; M-x guess-word
 
 ;;; Code:
 (require 's)
 (require 'f)
 (require 'subr-x)
 
-(defconst VERSION "0.0.1")
+(defconst VERSION "1.0.0")
 
 (defconst DIRNAME (file-name-directory (f-this-file)))
 
@@ -47,7 +63,7 @@
   :group 'guess-word)
 
 (defun random-word-map-string (fn str)
-  "Map str with index to Fn."
+  "Map STR with index to FN."
   (let ((index 0))
     (mapcar
      (lambda (ele)
@@ -55,7 +71,8 @@
        (funcall fn ele (1- index)))
      str)))
 
-(defun guess-word-success (word)
+(defun guess-word-success ()
+  "The input is success"
   (unless (member
            "result"
            (hash-table-keys guess-word-current-context))
@@ -93,19 +110,20 @@
   (message (format "switch to %s!" (car guess-word-dictionarys))))
 
 (defun guess-word-fill-the-answer ()
+  "填充正确答案."
   (save-excursion
     (goto-char (point-min))
     (delete-region (point-min) (line-end-position))
     (insert (gethash "word" guess-word-current-context))))
 
-;;; submit your answer
 (defun guess-word-submit ()
+  "submit input answer"
   (interactive)
   (save-excursion
     (goto-char 0)
     (let ((word (thing-at-point 'word)))
       (if (string= (gethash "word" guess-word-current-context) word)
-          (guess-word-success word)
+          (guess-word-success)
         (guess-word-failed word)))))
 
 ;;; random word by insert mask, pure function not random
