@@ -7,6 +7,7 @@
 ;;; Code:
 (require 's)
 (require 'f)
+(require 'subr-x)
 
 (defconst VERSION "0.0.1")
 
@@ -55,19 +56,27 @@
      str)))
 
 (defun guess-word-success (word)
-  (setq guess-word-current-result t)
+  (unless (member
+           "result"
+           (hash-table-keys guess-word-current-context))
+    (puthash "result" t guess-word-current-context))
+  (guess-word-next)
   (message "success"))
 
 (defun guess-word-failed (word)
-  (setq guess-word-current-result nil)
-  (message "wrong"))
+  (if (not word)
+      (progn
+        (guess-word-fill-the-answer)
+        (puthash "result" nil guess-word-current-context))
+    (message "wrong")))
 
 (defun guess-word-next ()
   (save-excursion
-    (when guess-word-current-result
+    (when (gethash "result" guess-word-current-context)
       (setq  guess-word-score (1+ guess-word-score)))
     (setq  guess-word-total (1+ guess-word-total))
     (guess-word-refresh-header-line)
+    (clrhash guess-word-current-context)
     (let ((inhibit-read-only t))
       (goto-char (point-min))
       (erase-buffer)
@@ -83,16 +92,11 @@
   (guess-word-refresh-header-line)
   (message (format "switch to %s!" (car guess-word-dictionarys))))
 
-(defun guess-word-next-maybe-wrong ()
-  (interactive)
-  (guess-word-submit)
-  (if guess-word-current-result
-      (guess-word-next)
-    (save-excursion
-      (setq guess-word-current-result t)
-      (goto-char (point-min))
-      (delete-region (point-min) (line-end-position))
-      (insert (car guess-word-current-context)))))
+(defun guess-word-fill-the-answer ()
+  (save-excursion
+    (goto-char (point-min))
+    (delete-region (point-min) (line-end-position))
+    (insert (gethash "word" guess-word-current-context))))
 
 ;;; submit your answer
 (defun guess-word-submit ()
@@ -100,7 +104,7 @@
   (save-excursion
     (goto-char 0)
     (let ((word (thing-at-point 'word)))
-      (if (string= (car guess-word-current-context) word)
+      (if (string= (gethash "word" guess-word-current-context) word)
           (guess-word-success word)
         (guess-word-failed word)))))
 
@@ -115,7 +119,7 @@
 
 (defun guess-word-insert-word (word definement)
   (setq guess-word-current-result nil)
-  (setq guess-word-current-context (list `(,@word)))
+  (puthash "word" word  guess-word-current-context)
 
   (save-excursion
     (insert (format "%s\n\n" (random-word word)))
@@ -165,7 +169,6 @@
 
 (progn
   (define-key guess-word-mode-map (kbd "C-r") 'guess-word-switch-dictionary)
-  (define-key guess-word-mode-map (kbd "C-<return>") 'guess-word-next-maybe-wrong)
   (define-key guess-word-mode-map (kbd "<return>") 'guess-word-submit))
 
 (setq guess-word-mode-font-lock
@@ -177,14 +180,16 @@
    header-line-format
    (substitute-command-keys
     (format
-     "[%s][%s/%s] 检查 `\\[guess-word-submit]' or 下一题 `\\[guess-word-next-maybe-wrong]'"
+     "[%s][%s/%s] 检查 `\\[guess-word-submit]'"
      (car guess-word-dictionarys) guess-word-score guess-word-total))))
 
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
   (setq-local guess-word-current-result nil)
-  (setq-local guess-word-current-context nil)
+  (setq-local
+   guess-word-current-context
+   (make-hash-table :test 'equal))
   (setq-local guess-word-total 0)
   (setq-local guess-word-score 0)
   (setq font-lock-defaults '(guess-word-mode-font-lock))
