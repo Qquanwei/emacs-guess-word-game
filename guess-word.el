@@ -48,9 +48,9 @@
   :group 'guess-word
   :type 'list)
 
-(defcustom guess-word-show-pronounciation
+(defcustom guess-word-show-pronunciation
   nil
-  "Show pronounciation of word if it exists in dictionary when non-nil."
+  "Show pronunciation of word if it exists in dictionary when non-nil."
   :group 'guess-word
   :type 'boolean)
 
@@ -186,7 +186,7 @@
       (forward-line line)
       (if (guess-word-esl-line-p (thing-at-point 'line t))
           (let ((line (thing-at-point 'line t)))
-            (if guess-word-show-pronounciation
+            (if guess-word-show-pronunciation
                 line
               (replace-regexp-in-string "\\[.*?\] " "" line 'fixedcase nil)))
         (guess-word-extract-word)))))
