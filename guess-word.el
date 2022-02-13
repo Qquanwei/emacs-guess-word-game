@@ -48,7 +48,13 @@
   :group 'guess-word
   :type 'list)
 
-(defvar-local guess-word-mask-condition 'oddp)
+(defcustom guess-word-show-pronunciation
+  nil
+  "Show pronunciation of word if it exists in dictionary when non-nil."
+  :group 'guess-word
+  :type 'boolean)
+
+(defvar-local guess-word-mask-condition 'cl-oddp)
 (defvar-local guess-word-total 0)
 (defvar-local guess-word-score 0)
 
@@ -179,7 +185,10 @@
     (let ((line (random (line-number-at-pos (point-max)))))
       (forward-line line)
       (if (guess-word-esl-line-p (thing-at-point 'line t))
-          (thing-at-point 'line t)
+          (let ((line (thing-at-point 'line t)))
+            (if guess-word-show-pronunciation
+                line
+              (replace-regexp-in-string "\\[.*?\] " "" line 'fixedcase nil)))
         (guess-word-extract-word)))))
 
 (defvar guess-word-mode-map (make-sparse-keymap)
