@@ -10,7 +10,7 @@
 
 ## keybinding
 
-* `<return>` 检查输入是否正确
+* `<return>` 检查输入是否正确, 如果错误情况下，清除所有输入，再按下 `<return>` 会显示正确答案
 * `C-r` 切换词库
 * `M-x guess-word-add-dictionary-path` 添加自定义字典
 * `M-x guess-word-delete-dictionary-path` 删除某一个词典
