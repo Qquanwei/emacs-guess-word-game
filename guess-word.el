@@ -25,7 +25,7 @@
 (require 'f)
 (require 'subr-x)
 
-(defconst VERSION "1.0.0")
+(defconst VERSION "1.0.1")
 
 (defconst DIRNAME (file-name-directory (f-this-file)))
 
@@ -84,20 +84,25 @@
            (hash-table-keys guess-word-current-context))
     (puthash "result" t guess-word-current-context))
   (guess-word-next)
+  (setq-local guess-word-curans-error-times 0)
   (message "success"))
 
 (defun guess-word-failed (word)
-  (if (not word)
+  (if (or (not word) (= guess-word-curans-error-times 1))
       (progn
         (guess-word-fill-the-answer)
         (puthash "result" nil guess-word-current-context))
-    (message "wrong")))
+    (message "wrong")
+    (setq-local guess-word-curans-error-times (1+ guess-word-curans-error-times))
+    (guess-word-refresh-header-line)
+    ))
 
 (defun guess-word-next ()
   (save-excursion
     (when (gethash "result" guess-word-current-context)
       (setq  guess-word-score (1+ guess-word-score)))
     (setq  guess-word-total (1+ guess-word-total))
+    (setq guess-word-curans-error-times 0)
     (guess-word-refresh-header-line)
     (clrhash guess-word-current-context)
     (let ((inhibit-read-only t))
@@ -206,14 +211,22 @@
   (setq-local
    header-line-format
    (substitute-command-keys
-    (format
-     "[%s][%s/%s] 检查 `\\[guess-word-submit]'"
-     (car guess-word-dictionarys) guess-word-score guess-word-total))))
+    (if (eq guess-word-curans-error-times 0)
+        (format
+         "[%s][%s/%s] 检查 `\\[guess-word-submit]' 切换词库`\\[guess-word-switch-dictionary]'"
+         (car guess-word-dictionarys) guess-word-score guess-word-total)
+      (format
+       "[%s][%s/%s] 错误,查看答案 `\\[guess-word-submit]'"
+       (car guess-word-dictionarys) guess-word-score guess-word-total)
+      )
+    )))
 
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
   (setq-local guess-word-current-result nil)
+  ;; 错误次数，如果连续按下submit错误次数为2次，则自动展示正确答案
+  (setq-local guess-word-curans-error-times 0)
   (setq-local
    guess-word-current-context
    (make-hash-table :test 'equal))
@@ -222,7 +235,14 @@
   (setq font-lock-defaults '(guess-word-mode-font-lock))
   (guess-word-refresh-header-line)
   (overwrite-mode)
-  (use-local-map guess-word-mode-map))
+  (use-local-map guess-word-mode-map)
+  ;; 这个hook可以监听普通按键的按下,对于<return><backward>这类特殊按键不会触发
+  (add-hook 'post-self-insert-hook
+            '(lambda ()
+               (setq guess-word-curans-error-times 0)
+               (guess-word-refresh-header-line))
+            0 t)
+  )
 
 (defun guess-word-add-dictionary-path (pName)
   "Added local dictionary to guess-word search list"
