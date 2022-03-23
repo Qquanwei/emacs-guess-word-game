@@ -257,6 +257,6 @@
   (let ((item (completing-read "" guess-word-dictionarys)))
     (setq guess-word-dictionarys (remove item guess-word-dictionarys ) )))
 
-(provide 'guess-word-mode)
+(provide 'guess-word)
 
 ;;; guess-word.el ends here
