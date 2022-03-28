@@ -24,15 +24,18 @@
 (require 's)
 (require 'f)
 (require 'subr-x)
+(require 'guess-word-db)
 
-(defconst VERSION "1.0.1")
+;; 版本号
+(defconst guess-word-VERSION "1.0.2")
 
+;; 文件夹名字
 (defconst DIRNAME (file-name-directory (f-this-file)))
 
 (defgroup guess-word nil
   "Guess word for ESL "
   :group 'language
-  :version VERSION
+  :version guess-word-VERSION
   :prefix "guess-word-"
   :link '(url-link "https://github.com/Qquanwei/emacs-guess-word-game"))
 
@@ -55,8 +58,6 @@
   :type 'boolean)
 
 (defvar-local guess-word-mask-condition 'cl-oddp)
-(defvar-local guess-word-total 0)
-(defvar-local guess-word-score 0)
 
 (defface guess-word-headline
   '((t (:inherit bold)))
@@ -79,37 +80,38 @@
 
 (defun guess-word-success ()
   "The input is success"
-  (unless (member
-           "result"
-           (hash-table-keys guess-word-current-context))
-    (puthash "result" t guess-word-current-context))
+  (unless (plist-get guess-word-current-context ':result)
+    (plist-put guess-word-current-context ':result t))
   (guess-word-next)
-  (setq-local guess-word-curans-error-times 0)
-  (message "success"))
+  (setq-local guess-word-curans-error-times 0))
 
 (defun guess-word-failed (word)
   (if (or (not word) (= guess-word-curans-error-times 1))
       (progn
         (guess-word-fill-the-answer)
-        (puthash "result" nil guess-word-current-context))
-    (message "wrong")
+        (plist-put guess-word-current-context ':result nil))
     (setq-local guess-word-curans-error-times (1+ guess-word-curans-error-times))
-    (guess-word-refresh-header-line)
-    ))
+    (guess-word-refresh-header-line)))
+
+(defun guess-word-plist-map (key plist fun)
+  (plist-put plist key (funcall fun (plist-get plist key))))
 
 (defun guess-word-next ()
-  (save-excursion
-    (when (gethash "result" guess-word-current-context)
-      (setq  guess-word-score (1+ guess-word-score)))
-    (setq  guess-word-total (1+ guess-word-total))
-    (setq guess-word-curans-error-times 0)
-    (guess-word-refresh-header-line)
-    (clrhash guess-word-current-context)
-    (let ((inhibit-read-only t))
-      (goto-char (point-min))
-      (erase-buffer)
-      (let ((pair (guess-word-esl-line-to-pair (guess-word-extract-word))))
-        (guess-word-insert-word (car pair) (cdr pair))))))
+  (let ((word (plist-get guess-word-current-context ':word)))
+    (save-excursion
+      (if (plist-get guess-word-current-context ':result)
+          (progn
+            (guess-word-plist-map ':score guess-word-current-context '1+)
+            (guess-word-db-increase-word word))
+        (guess-word-db-decrease-word word))
+      (guess-word-plist-map ':total guess-word-current-context '1+)
+      (setq guess-word-curans-error-times 0)
+      (guess-word-refresh-header-line)
+      (let ((inhibit-read-only t))
+        (goto-char (point-min))
+        (erase-buffer)
+        (let ((pair (guess-word-esl-line-to-pair (guess-word-extract-word))))
+          (guess-word-insert-word (car pair) (cdr pair)))))))
 
 (defun guess-word-switch-dictionary ()
   "切换词库"
@@ -125,7 +127,7 @@
   (save-excursion
     (goto-char (point-min))
     (delete-region (point-min) (line-end-position))
-    (insert (gethash "word" guess-word-current-context))))
+    (insert (plist-get guess-word-current-context ':word))))
 
 (defun guess-word-submit ()
   "submit input answer"
@@ -133,7 +135,7 @@
   (save-excursion
     (goto-char 0)
     (let ((word (thing-at-point 'word)))
-      (if (string= (gethash "word" guess-word-current-context) word)
+      (if (string= (plist-get guess-word-current-context ':word) word)
           (guess-word-success)
         (guess-word-failed word)))))
 
@@ -147,8 +149,8 @@
               word)))
 
 (defun guess-word-insert-word (word definement)
-  (setq guess-word-current-result nil)
-  (puthash "word" word  guess-word-current-context)
+  (guess-word-plist-map ':result guess-word-current-context 'ignore)
+  (plist-put guess-word-current-context ':word word )
 
   (save-excursion
     (insert (format "%s\n\n" (random-word word)))
@@ -156,10 +158,9 @@
       (insert definement)
       (add-text-properties (- begin 2) (point) '(read-only t)))))
 
-;;;###autoload
 (defun guess-word ()
   (interactive)
-  (let ((buffer-name (format "*guess-word %s*" VERSION)))
+  (let ((buffer-name (format "*guess-word %s*" guess-word-VERSION)))
     (when (not (get-buffer buffer-name))
       (with-current-buffer
           (get-buffer-create buffer-name)
@@ -201,11 +202,18 @@
 
 (progn
   (define-key guess-word-mode-map (kbd "C-r") 'guess-word-switch-dictionary)
+  (define-key guess-word-mode-map (kbd "C-s") 'guess-word-save)
   (define-key guess-word-mode-map (kbd "<return>") 'guess-word-submit))
 
 (setq guess-word-mode-font-lock
       '(("^[a-zA-Z]+$" . guess-word-headline)
         ("^ ." . guess-word-definement)))
+
+(defun guess-word-save ()
+  (interactive)
+  (guess-word-db-update-context guess-word-current-context)
+  (guess-word-db-memory-to-file)
+  (message "保存成功"))
 
 (defun guess-word-refresh-header-line ()
   (setq-local
@@ -213,36 +221,44 @@
    (substitute-command-keys
     (if (eq guess-word-curans-error-times 0)
         (format
-         "[%s][%s/%s] 检查 `\\[guess-word-submit]' 切换词库`\\[guess-word-switch-dictionary]'"
-         (car guess-word-dictionarys) guess-word-score guess-word-total)
+         "[%s][%s/%s] 检查 `\\[guess-word-submit]' 切换词库`\\[guess-word-switch-dictionary]' 保存进度 \\[guess-word-save]"
+         (car guess-word-dictionarys)
+         (plist-get guess-word-current-context ':score)
+         (plist-get guess-word-current-context ':total)
+         )
       (format
        "[%s][%s/%s] 错误,查看答案 `\\[guess-word-submit]'"
-       (car guess-word-dictionarys) guess-word-score guess-word-total)
+       (car guess-word-dictionarys)
+       (plist-get guess-word-current-context ':score)
+       (plist-get guess-word-current-context ':total)
+       )
       )
     )))
 
 (define-derived-mode guess-word-mode nil "GSW"
   "The guss word game major mode"
   :group 'guess-word
-  (setq-local guess-word-current-result nil)
+  (guess-word-db-init)
   ;; 错误次数，如果连续按下submit错误次数为2次，则自动展示正确答案
   (setq-local guess-word-curans-error-times 0)
-  (setq-local
-   guess-word-current-context
-   (make-hash-table :test 'equal))
-  (setq-local guess-word-total 0)
-  (setq-local guess-word-score 0)
+  (let ((context (guess-word-db-query-word 'context)))
+    (if context
+        (setq-local guess-word-current-context context)
+      (setq-local
+       guess-word-current-context
+       (list :total 0 :score 0 :result nil :word nil))))
   (setq font-lock-defaults '(guess-word-mode-font-lock))
   (guess-word-refresh-header-line)
   (overwrite-mode)
   (use-local-map guess-word-mode-map)
-  ;; 这个hook可以监听普通按键的按下,对于<return><backward>这类特殊按键不会触发
-  (add-hook 'post-self-insert-hook
-            '(lambda ()
-               (setq guess-word-curans-error-times 0)
-               (guess-word-refresh-header-line))
-            0 t)
-  )
+  ;; 这个hook监听文件变更
+  (add-hook 'after-change-functions
+            'guess-word-keyboard-hook
+            0 t))
+
+(defun guess-word-keyboard-hook (&rest char)
+  (setq guess-word-curans-error-times 0)
+  (guess-word-refresh-header-line))
 
 (defun guess-word-add-dictionary-path (pName)
   "Added local dictionary to guess-word search list"
