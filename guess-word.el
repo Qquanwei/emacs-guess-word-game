@@ -84,11 +84,6 @@
 (defun guess-word-next ()
   (let ((word (plist-get guess-word-current-context ':word)))
     (save-excursion
-      (if (plist-get guess-word-current-context ':result)
-          (progn
-            (guess-word-plist-map ':score guess-word-current-context '1+)
-            (guess-word-db-increase-word word))
-        (guess-word-db-decrease-word word))
       (guess-word-plist-map ':total guess-word-current-context '1+)
       (guess-word-refresh-header-line)
       (let ((inhibit-read-only t))
@@ -144,13 +139,27 @@
        )))
 
   ;; 根据当前状态进行展示
-  (let ((status (plist-get guess-word-current-context ':submit)))
+  (let (
+        (status (plist-get guess-word-current-context ':submit))
+        (word (plist-get guess-word-current-context ':word))
+        )
     (cond
      ((equal status 0) (guess-word-next))
-     ((or (equal status 1) (equal status 5)) (progn (freezen-word) (goto-paragraph) (guess-word-show-resemble)))
+     ((equal status 1) (progn
+                         (freezen-word)
+                         (goto-paragraph)
+                         (guess-word-show-resemble)
+                         (guess-word-plist-map ':score guess-word-current-context '1+)
+                         (guess-word-db-decrease-word word)
+                         ))
+     ((equal status 5) (progn
+                         (freezen-word)
+                         (goto-paragraph)
+                         (guess-word-show-resemble)
+                         (guess-word-db-increase-word word)
+                         ))
      ((equal status 3) (progn (guess-word-fill-the-answer) (guess-word-show-resemble)))
-     ((equal status 4) (fill-the-paragraph-answer))
-     )
+     ((equal status 4) (fill-the-paragraph-answer)))
     (guess-word-refresh-header-line)))
 
 (defun freezen-word ()
