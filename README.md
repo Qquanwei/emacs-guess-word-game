@@ -1,6 +1,7 @@
 # 规则
 
-给出单词释义，另外将答案糢糊化，写出正确的单词即可。
+1. 给出单词释义，另外将答案糢糊化，写出正确的单词即可。
+2. 提供了同义词辨析，方便同向对比相同意思的词。
 
 ![image](./snapshot/guess-word.gif)
 
@@ -23,4 +24,12 @@
 * 六级词汇
 * 托福核心
 
-Thanks https://github.com/mahavivo/english-wordlists
+Thanks https://github.com/mahavivo/english-wordlists 提供了词典库
+Thanks https://github.com/skywind3000/ECDICT 提供了同义词辨析库
+
+
+## 例句
+
+例句生成脚本在 node.js 中，如果添加新的词库需要重新生成下例句。(默认例句包含了CET4, CET6, TOEFL，7748条，已经足够全了，所以也可以不重新生成)。
+
+例句使用的是从海词句海网站抓取(juhai.dict.cn)

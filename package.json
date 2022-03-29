@@ -1,0 +1,24 @@
+{
+  "name": "emacs-guess-word-game",
+  "version": "1.0.0",
+  "description": "1. 给出单词释义，另外将答案糢糊化，写出正确的单词即可。 2. 提供了同义词辨析，方便同向对比相同意思的词。",
+  "main": "node.js",
+  "dependencies": {
+    "axios": "^0.26.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Qquanwei/emacs-guess-word-game.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Qquanwei/emacs-guess-word-game/issues"
+  },
+  "homepage": "https://github.com/Qquanwei/emacs-guess-word-game#readme"
+}

@@ -1,4 +1,6 @@
 (require 'f)
+(require 'guess-word-fn)
+
 ;; 数据库文件
 ;; 字段设计：eng, text, times(正确次数), addtime, lasttime
 (defcustom guess-word-db-file
@@ -72,6 +74,13 @@
 
 (defun guess-word-db-update-context (context)
   (puthash 'context context guess-word-db-map-in-memory))
+
+;; 记录用户输入的例句
+(defun guess-word-db-update-paragraph (word paragraph)
+  (guess-word-hash-map
+   word
+   guess-word-db-map-in-memory
+   #'(lambda (plist) (plist-put plist ':paragraph paragraph))))
 
 
 (provide 'guess-word-db)
