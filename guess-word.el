@@ -28,6 +28,7 @@
 (require 'guess-word-resemble)
 (require 'guess-word-paragraph)
 (require 'guess-word-fn)
+(require 'guess-word-org)
 
 ;; 版本号
 (defconst guess-word-VERSION "1.0.2")
@@ -255,13 +256,14 @@
               (replace-regexp-in-string "\\[.*?\] " "" line 'fixedcase nil)))
         (guess-word-extract-word)))))
 
-(defvar guess-word-mode-map (make-sparse-keymap)
+(defvar guess-word-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-r") 'guess-word-switch-dictionary)
+    (define-key map (kbd "C-s") 'guess-word-save)
+    (define-key map (kbd "C-l") 'guess-word-save-to-org)
+    (define-key map (kbd "<return>") 'guess-word-submit)
+    map)
   "Keymap for guess-word-mode")
-
-(progn
-  (define-key guess-word-mode-map (kbd "C-r") 'guess-word-switch-dictionary)
-  (define-key guess-word-mode-map (kbd "C-s") 'guess-word-save)
-  (define-key guess-word-mode-map (kbd "<return>") 'guess-word-submit))
 
 (setq guess-word-mode-font-lock
       '(("^[a-zA-Z]+$" . guess-word-headline)
@@ -272,6 +274,14 @@
   (guess-word-db-update-context guess-word-current-context)
   (guess-word-db-memory-to-file)
   (message "保存成功"))
+
+(defun guess-word-save-to-org ()
+  (interactive)
+  (with-current-buffer
+      (guess-word-current-buffer-to-org (plist-get guess-word-current-context ':word))
+    (set-window-point
+     (display-buffer (current-buffer))
+     (point-max))))
 
 (defun guess-word-refresh-header-line ()
   (let* ((status (plist-get guess-word-current-context ':submit))
@@ -290,7 +300,7 @@
      header-line-format
      (substitute-command-keys
       (format
-       "[%s][%s/%s] %s `\\[guess-word-submit]' 切换词库`\\[guess-word-switch-dictionary]' 保存进度 \\[guess-word-save]"
+       "[%s][%s/%s] %s \\[guess-word-submit] 切换词库\\[guess-word-switch-dictionary] 保存进度 \\[guess-word-save] 添加到收藏 \\[guess-word-save-to-org]"
        (car guess-word-dictionarys)
        (plist-get guess-word-current-context ':score)
        (plist-get guess-word-current-context ':total)
