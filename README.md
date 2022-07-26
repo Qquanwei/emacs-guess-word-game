@@ -17,6 +17,35 @@
 
 ![save](./snapshot/snap2.png)
 
+
+# 安装
+
+1. 普通安装
+
+```
+git clone https://github.com/Qquanwei/emacs-guess-word-game ~/.emacs.d/emacs-guess-word-game
+```
+
+然后添加到搜索路径
+
+```
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/emacs-guess-word-game"))
+(require 'guess-word)
+```
+
+2. 如果使用  `use-package`
+
+```
+git clone https://github.com/Qquanwei/emacs-guess-word-game ~/.emacs.d/emacs-guess-word-game
+```
+
+```
+(use-package guess-word
+  :load-path "./emacs-guess-word-game"
+  :commands (guess-word))
+```
+
+
 # using
 
 > M-: (guess-word)
